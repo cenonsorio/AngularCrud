@@ -1,0 +1,143 @@
+<div class="container">    
+    <mat-card class="mat-elevation-z8">     
+      <br><br>    
+      <mat-card-content>    
+        <form [formGroup]="questionsForm" (ngSubmit)="onFormSubmit()">    
+          <table>    
+            <tr>    
+              <td class="tbl1">    
+                <mat-form-field class="demo-full-width">    
+                  <input formControlName="question" matTooltip="Enter Question" matInput placeholder="Question" autocomplete="off">    
+                </mat-form-field>    
+                <mat-error>    
+                  <span *ngIf="!questionsForm.get('question').value && questionsForm.get('question').touched"></span>    
+                </mat-error>    
+              </td>    
+              <td class="tbl1">    
+                <mat-form-field class="demo-full-width">    
+                  <input formControlName="order" matTooltip="Enter order" matInput placeholder="order" autocomplete="off">    
+                </mat-form-field>    
+                <mat-error>    
+                  <span *ngIf="!questionsForm.get('order').value && questionsForm.get('order').touched"></span>    
+                </mat-error>    
+              </td>    
+              <td class="tbl1">    
+                <mat-form-field class="demo-full-width">    
+                  <input formControlName="points" matTooltip="Enter points" matInput placeholder="points" autocomplete="off">    
+                </mat-form-field>    
+                <mat-error>    
+                  <span *ngIf="!questionsForm.get('points').value && questionsForm.get('points').touched"></span>    
+                </mat-error>    
+              </td>
+              <td class="tbl1">    
+                <mat-form-field class="demo-full-width">    
+                  <input formControlName="answers" matTooltip="Enter Answer" matInput placeholder="Answer" autocomplete="off">    
+                </mat-form-field>    
+                <mat-error>    
+                  <span *ngIf="!questionsForm.get('answers').value && questionsForm.get('answers').touched"></span>    
+                </mat-error>    
+              </td>  
+              <td class="tbl1">    
+                <span>Question Type</span>     
+       
+                <mat-radio-group matTooltip="Enter question_types" formControlName="question_types">    
+                  <mat-radio-button value="multiple" [checked]="isMultitple">Multiple</mat-radio-button>      
+                  <mat-radio-button value="yesorno" [checked]="isYesOrNo">Yes or No</mat-radio-button>      
+                </mat-radio-group>    
+                <mat-error>    
+                  <span *ngIf="!questionsForm.get('question_types').value && questionsForm.get('question_types').touched"></span>    
+                </mat-error>    
+              </td>    
+            </tr>    
+            <tr>          
+            </tr>    
+            <tr>    
+              <td class="content-center">    
+                <button type="submit" mat-raised-button color="accent" matTooltip="Submit" [disabled]="!questionsForm.valid">Submit</button>        
+                <button type="reset" mat-raised-button color="accent" matTooltip="Reset" (click)="resetForm()">Reset</button>    
+              </td>    
+              <td>    
+                <p *ngIf="dataSaved" style="color:rgb(0, 128, 0);font-size:20px;font-weight:bold" Class="success" align="left">    
+                  {{massage}}    
+                </p>    
+              </td>    
+              <td></td>    
+              <td></td>    
+            </tr>    
+          </table>    
+          <br><br>    
+       
+          <!-- <mat-form-field>    
+            <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">    
+          </mat-form-field>     -->
+                  
+          <!-- <button mat-icon-button aria-label="Example icon button with a delete icon" type="button" mat-raised-button color="accent" matTooltip="Delete" (click)="DeleteData()"><mat-icon>delete</mat-icon></button>     -->
+       
+          <div>    
+       
+            <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8" style="box-shadow: 0 3px 5px -1px rgba(0,0,0,.2), 0 6px 10px 0 rgba(0,0,0,.14), 0 1px 18px 0 rgba(0,0,0,.12);">    
+       
+              <!-- Checkbox Column -->    
+              <ng-container matColumnDef="select">    
+                <th style="width: 100px;" mat-header-cell *matHeaderCellDef>    
+                  <mat-checkbox (change)="$event ? masterToggle() : null"    
+                                [checked]="selection.hasValue() && isAllSelected()"    
+                                [indeterminate]="selection.hasValue() && !isAllSelected()"></mat-checkbox>    
+                </th>    
+                <td mat-cell *matCellDef="let row">    
+                  <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null"    
+                                [checked]="selection.isSelected(row)" [aria-label]="checkboxLabel(row)"></mat-checkbox>    
+                </td>    
+              </ng-container>    
+       
+              <ng-container matColumnDef="question">    
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Question </th>    
+                <td mat-cell *matCellDef="let questions"> {{questions.question}} </td>    
+              </ng-container>    
+       
+              <ng-container matColumnDef="order">    
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Order </th>    
+                <td mat-cell *matCellDef="let questions"> {{questions.order}} </td>    
+              </ng-container>       
+       
+              <ng-container matColumnDef="points">    
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Points </th>    
+                <td mat-cell *matCellDef="let questions"> {{questions.points}} </td>    
+              </ng-container>
+              
+              <ng-container matColumnDef="answers">    
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Answer </th>    
+                <td mat-cell *matCellDef="let questions"> {{questions.answers}} </td>    
+              </ng-container>  
+       
+              <ng-container matColumnDef="question_types">    
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Question Type </th>    
+                <td mat-cell *matCellDef="let questions"> {{questions.question_type == 'multiple' ? 'Multiple' : 'Yes Or No'}} </td>    
+              </ng-container>       
+       
+              <ng-container matColumnDef="Edit">    
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Edit </th>    
+       
+                <td mat-cell *matCellDef="let questions">    
+       
+                  <button mat-icon-button aria-label="Example icon button with a vertical three dot icon" type="button" mat-raised-button color="accent" matTooltip="Edit" (click)="loadQuestionToEdit(questions.id)"><mat-icon>edit</mat-icon></button>    
+       
+                </td>    
+              </ng-container>    
+       
+              <ng-container matColumnDef="Delete">    
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Delete </th>    
+                <td mat-cell *matCellDef="let questions"> <button mat-icon-button aria-label="Example icon button with a delete icon" type="button" mat-raised-button color="accent" matTooltip="Delete" (click)="deleteQuestion(questions.id)"><mat-icon>delete_forever</mat-icon></button></td>    
+              </ng-container>    
+       
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>    
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>    
+            </table>    
+       
+            <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>    
+          </div>    
+       
+        </form>    
+      </mat-card-content>    
+    </mat-card>    
+  </div> 
